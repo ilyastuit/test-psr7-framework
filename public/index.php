@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\ActionResolver;
 use App\Http\Controller\SiteController;
+use App\Http\Router\AuraRouterAdapter;
+use App\Http\Router\Exception\RequestNotMatchedException;
 use Aura\Router\RouterContainer;
-use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
@@ -10,32 +12,26 @@ use Zend\Diactoros\ServerRequestFactory;
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
-### Initialization
-
-$request = ServerRequestFactory::fromGlobals();
-
-### Action
-
 $aura = new RouterContainer();
 $routes = $aura->getMap();
 
 $routes->get('action','/', [SiteController::class, 'index']);
 
-$matcher = $aura->getMatcher();
-$route = $matcher->match($request);
+$router = new AuraRouterAdapter($aura);
+$resolver = new ActionResolver();
 
-if (!$route) {
-    $action = function (ServerRequestInterface $request) {
-      return new HtmlResponse('Not Found', 404);
-    };
-} else {
-    foreach ($route->attributes as $item => $value) {
+$request = ServerRequestFactory::fromGlobals();
+
+try {
+    $result = $router->match($request);
+    foreach ($result->getAttributes() as $item => $value) {
         $request = $request->withAttribute($item, $value);
     }
-    $action = $route->handler;
+    $action = $resolver->resolve($result->getHandler());
+    $response = $action($request);
+} catch (RequestNotMatchedException $e) {
+    $response = new HtmlResponse('Not Found');
 }
-
-$response = $action($request);
 
 $emitter = new SapiEmitter();
 $emitter->emit($response);
