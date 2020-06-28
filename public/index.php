@@ -1,8 +1,9 @@
 <?php
 
+use App\Http\Controller\SiteController;
+use Aura\Router\RouterContainer;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
@@ -15,23 +16,26 @@ $request = ServerRequestFactory::fromGlobals();
 
 ### Action
 
-$path = $request->getUri()->getPath();
-$action = null;
+$aura = new RouterContainer();
+$routes = $aura->getMap();
 
-if ($path === '/') {
+$routes->get('action','/', [SiteController::class, 'action']);
+
+$matcher = $aura->getMatcher();
+$route = $matcher->match($request);
+
+if (!$route) {
     $action = function (ServerRequestInterface $request) {
-        $name = $request->getQueryParams()['name'] ?? 'Guest';
-        return new HtmlResponse('Hello, ' . $name . '!');
+      return new HtmlResponse('Not Found', 404);
     };
-}
-
-if ($action) {
-    $response = $action($request);
 } else {
-    $response = new HtmlResponse('Undefined page', 404);
+    foreach ($route->attributes as $item => $value) {
+        $request = $request->withAttribute($item, $value);
+    }
+    $action = $route->handler;
 }
 
-$response = $response->withHeader('X-Developer', 'Ilyas');
+$response = $action($request);
 
 $emitter = new SapiEmitter();
 $emitter->emit($response);
