@@ -19,7 +19,7 @@ $request = ServerRequestFactory::fromGlobals();
 $aura = new RouterContainer();
 $routes = $aura->getMap();
 
-$routes->get('action','/', [SiteController::class, 'action']);
+$routes->get('action','/', [SiteController::class, 'index']);
 
 $matcher = $aura->getMatcher();
 $route = $matcher->match($request);

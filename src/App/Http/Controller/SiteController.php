@@ -2,12 +2,14 @@
 
 namespace App\Http\Controller;
 
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
 class SiteController
 {
-    public function action()
+    public function index(ServerRequestInterface $request)
     {
-        return new HtmlResponse('Hello');
+        $name = $request->getQueryParams()['name'] ?? 'Guest';
+        return new HtmlResponse('Hello ' . $name);
     }
 }
