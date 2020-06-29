@@ -7,12 +7,14 @@ class Pagination
     private $totalCount;
     private $page;
     private $perPage;
+    private $params;
 
-    public function __construct(int $totalCount, int $page, int $perPage)
+    public function __construct(int $totalCount, int $page, int $perPage, $params = null)
     {
         $this->totalCount = $totalCount;
         $this->page = $page;
         $this->perPage = $perPage;
+        $this->params = $params;
     }
 
     public function getTotalCount(): int
@@ -38,6 +40,11 @@ class Pagination
     public function getLimit(): int
     {
         return $this->perPage;
+    }
+
+    public function getParams()
+    {
+        return $this->params;
     }
 
     public function getOffset(): int

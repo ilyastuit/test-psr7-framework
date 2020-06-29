@@ -14,19 +14,85 @@
 {% endblock %}
 
 {% block content %}
+
+        <div class="form-row">
+            <div class="col-1 mr-5">
+                <form action="" method="get">
+                    <input type="hidden" name="sort" value="{{ sortSwitcher.sortSwitcher(params.sort) }}" />
+                    <input type="hidden" name="field" value="username"/>
+                    <button class="btn">
+                        {% if params.field == 'username' %}
+                            {{ sortSwitcher.arrowSwitcher(params.sort)|raw }}
+                        {% endif %}
+                        Username</button>
+                </form>
+            </div>
+            <div class="col-1">
+                <form action="" method="get">
+                    <input type="hidden" name="sort" value="{{ sortSwitcher.sortSwitcher(params.sort) }}" />
+                    <input type="hidden" name="field" value="email"/>
+                    <button class="btn">
+                        {% if params.field == 'email' %}
+                            {{ sortSwitcher.arrowSwitcher(params.sort)|raw }}
+                        {% endif %}
+                        Email</button>
+                </form>
+            </div>
+            <div class="col-1">
+                <form action="" method="get">
+                    <input type="hidden" name="sort" value="{{ sortSwitcher.sortSwitcher(params.sort) }}" />
+                    <input type="hidden" name="field" value="checked"/>
+                    <button class="btn">
+                        {% if params.field == 'checked' %}
+                            {{ sortSwitcher.arrowSwitcher(params.sort)|raw }}
+                        {% endif %}
+                        Checked</button>
+                </form>
+            </div>
+        </div>
+
     <h1>Tasks</h1>
 
     {% for task in tasks %}
 
         <div class="card mb-3">
             <div class="card-header">
-                <span class="float-right">{{ task.created_at|date('Y-m-d') }}, </span>
-                <a>{{ task.username }}</a>
+                <span class="float-right">{{ task.created_at|date('Y-m-d') }}</span>
+                <b>Username: </b><a>{{ task.username }}</a>
+                <b>Email: </b><a>{{ task.email }}</a>
             </div>
             <div class="card-body">{{ task.content|nl2br }}</div>
+            <div class="card-footer">
+                {% if task.if_edited == true %}
+                    Edited by Admin.
+                {% endif %}
+                {% if task.if_edited == true %}
+                    <span class="float-right"><span class="btn btn-success">Checked</span></span>
+                {% endif %}
+            </div>
         </div>
 
     {% endfor %}
+
+    <form action="{{ path('task_create') }}" method="post" class="my-5">
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="username">Username</label>
+                <input type="text" name="username" class="form-control" id="username" placeholder="Username">
+            </div>
+            <div class="form-group col-md-6">
+                <label for="email">Email</label>
+                <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="inputAddress">Task</label>
+            <div class="input-group">
+                <textarea class="form-control" aria-label="With textarea" name="text"></textarea>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-success">Send</button>
+    </form>
 
     {% include 'share/pager.html.twig' with {
         'pager': pager,

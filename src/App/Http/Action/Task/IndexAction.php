@@ -2,6 +2,7 @@
 
 namespace App\Http\Action\Task;
 
+use App\Helper\SortSwitcher;
 use App\Model\Pagination;
 use App\Model\TaskReadRepository;
 use Framework\Template\TemplateRenderer;
@@ -12,7 +13,7 @@ use Zend\Diactoros\Response\HtmlResponse;
 
 class IndexAction implements RequestHandlerInterface
 {
-    private const PER_PAGE = 5;
+    private const PER_PAGE = 3;
 
     private $tasks;
     private $template;
@@ -25,20 +26,28 @@ class IndexAction implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        $params['sort'] = $request->getQueryParams()['sort'] ?? 'asc';
+        $params['field'] = $request->getQueryParams()['field'] ?? 'username';
+        $sortSwitcher = new SortSwitcher();
+
         $pager = new Pagination(
             $this->tasks->countAll(),
             $request->getAttribute('page') ?: 1,
-            self::PER_PAGE
+            self::PER_PAGE,
+            $params
         );
 
         $tasks = $this->tasks->getAll(
             $pager->getOffset(),
-            $pager->getLimit()
+            $pager->getLimit(),
+            $params
         );
 
         return new HtmlResponse($this->template->render('app/task/index', [
             'tasks' => $tasks,
             'pager' => $pager,
+            'params' => $params,
+            'sortSwitcher' => $sortSwitcher
         ]));
     }
 }
