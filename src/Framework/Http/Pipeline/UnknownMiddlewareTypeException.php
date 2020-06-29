@@ -10,7 +10,7 @@ class UnknownMiddlewareTypeException extends \InvalidArgumentException
 
     public function __construct($type)
     {
-        parent::__construct('Unknown middleware type');
+        parent::__construct('Unknown middleware type ' . $type);
         $this->type = $type;
     }
 

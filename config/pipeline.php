@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Middleware\AuthMiddleware;
-use App\Http\Middleware\ErrorHandlerMiddleware;
 use Framework\Http\Application;
+use Framework\Http\Middleware\ErrorHandler\ErrorHandlerMiddleware;
 use Framework\Http\Middleware\RouteMiddleware;
 
 /* @var Application $app */

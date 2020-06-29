@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Middleware\ErrorHandlerMiddleware;
 use App\Http\Middleware\NotFoundMiddleware;
 use Framework\Http\Application;
+use Framework\Http\Middleware\ErrorHandler\ErrorHandlerMiddleware;
+use Framework\Http\Middleware\ErrorHandler\ErrorResponseGenerator;
+use Framework\Http\Middleware\ErrorHandler\PrettyErrorResponseGenerator;
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
 use Framework\Template\TemplateRenderer;
 use Framework\Template\Twig\TwigRenderer;
 use Psr\Container\ContainerInterface;
-use Zend\Stratigility\Middleware\ErrorResponseGenerator;
+use Zend\Diactoros\Response;
 
 return [
     'dependencies' => [
@@ -24,6 +26,17 @@ return [
                     $container->get(NotFoundMiddleware::class)
                 );
             },
+            ErrorResponseGenerator::class => function(ContainerInterface $container) {
+                return new PrettyErrorResponseGenerator(
+                    $container->get(TemplateRenderer::class),
+                    new Response(),
+                    [
+                        '403' => 'error/403',
+                        '404' => 'error/404',
+                        'error' => 'error/error',
+                    ]
+                );
+            },
             Router::class => function () {
                 return new AuraRouterAdapter(new Aura\Router\RouterContainer());
             },
@@ -32,7 +45,7 @@ return [
             },
             ErrorHandlerMiddleware::class => function (ContainerInterface $container) {
                     return new ErrorHandlerMiddleware(
-                        $container->get(TemplateRenderer::class)
+                        $container->get(ErrorResponseGenerator::class)
                 );
             },
         ],
