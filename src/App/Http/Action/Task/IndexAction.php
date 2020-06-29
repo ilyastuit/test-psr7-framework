@@ -3,6 +3,7 @@
 namespace App\Http\Action\Task;
 
 use App\Helper\SortSwitcher;
+use App\Helper\ValidationHelper;
 use App\Model\Pagination;
 use App\Model\TaskReadRepository;
 use Framework\Template\TemplateRenderer;
@@ -26,9 +27,12 @@ class IndexAction implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        session_start();
         $params['sort'] = $request->getQueryParams()['sort'] ?? 'asc';
         $params['field'] = $request->getQueryParams()['field'] ?? 'username';
+
         $sortSwitcher = new SortSwitcher();
+        $validator = new ValidationHelper();
 
         $pager = new Pagination(
             $this->tasks->countAll(),
@@ -47,7 +51,8 @@ class IndexAction implements RequestHandlerInterface
             'tasks' => $tasks,
             'pager' => $pager,
             'params' => $params,
-            'sortSwitcher' => $sortSwitcher
+            'sortSwitcher' => $sortSwitcher,
+            'validator' => $validator,
         ]));
     }
 }

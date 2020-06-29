@@ -88,16 +88,18 @@ class TaskReadRepository
 
     public function validate($fields)
     {
+        session_start();
         $username = $fields['username'] ?? null;
         $email = $fields['email'] ?? null;
         $text = $fields['text'] ?? null;
         $error = false;
-        if (empty($username) && strlen($username) > 255)
+
+        if (empty($username) || strlen($username) > 255)
         {
             $error = true;
             $_SESSION['errors']['username'] = 'Username is required and must be less 255 symbols.';
         }
-        if (empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+        if (empty($email) || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             $error = true;
             $_SESSION['errors']['email'] = 'E-mail is required and must be valid format.';
         }

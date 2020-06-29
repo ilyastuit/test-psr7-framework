@@ -74,24 +74,33 @@
 
     {% endfor %}
 
-    <form action="{{ path('task_create') }}" method="post" class="my-5">
+    <form action="{{ path('task_create') }}" method="post" class="needs-validation {{ validator.isValidated }} my-5">
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="username">Username</label>
-                <input type="text" name="username" class="form-control" id="username" placeholder="Username">
+                <input type="text" name="username" class="form-control" id="username" placeholder="Username" required value="{{ validator.getOldValue('username') }}">
+                <div class="invalid-feedback">
+                    {{ validator.getError('username') }}
+                </div>
             </div>
             <div class="form-group col-md-6">
                 <label for="email">Email</label>
-                <input type="email" name="email" class="form-control" id="email" placeholder="Email">
+                <input type="email" name="email" class="form-control" id="email" placeholder="Email" required value="{{ validator.getOldValue('email') }}">
+                <div class="invalid-feedback">
+                    {{ validator.getError('email') }}
+                </div>
             </div>
         </div>
         <div class="form-group">
-            <label for="inputAddress">Task</label>
+            <label for="text">Task</label>
             <div class="input-group">
-                <textarea class="form-control" aria-label="With textarea" name="text"></textarea>
+                <textarea class="form-control" id="text" aria-label="With textarea" name="text" required>{{ validator.getOldValue('text') }}</textarea>
+                <div class="invalid-feedback">
+                    {{ validator.getError('text') }}
+                </div>
             </div>
         </div>
-        <button type="submit" class="btn btn-success">Send</button>
+        <input type="submit" class="btn btn-success">
     </form>
 
     {% include 'share/pager.html.twig' with {
@@ -99,5 +108,27 @@
         'main_route': 'home',
         'route': 'task_page',
     } %}
+
+    <script>
+        // Example starter JavaScript for disabling form submissions if there are invalid fields
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
+    </script>
+
 
 {% endblock %}
