@@ -6,15 +6,16 @@
     "php": ">=7.1.0",
     "ext-PDO": "^7.1",
     "aura/router": "^3.1",
-    "filp/whoops": "^2.7",
     "twig/twig": "^3.0",
     "zendframework/zend-config-aggregator": "^1.2",
     "zendframework/zend-diactoros": "^1.6",
     "zendframework/zend-servicemanager": "^3.4",
-    "zendframework/zend-stratigility": "^3.0"
+    "zendframework/zend-stratigility": "^3.0",
+    "robmorgan/phinx": "^0.10.6"
   },
   "require-dev": {
-    "roave/security-advisories": "dev-master"
+    "roave/security-advisories": "dev-master",
+    "fzaninotto/faker": "^1.8"
   },
   "autoload": {
     "psr-4": {
@@ -25,6 +26,8 @@
   },
   "scripts": {
     "serve": "php -S 0.0.0.0:8080 -t public",
-    "test": "phpunit --colors=always"
+    "development-enable": "ln -sr config/autoload/development.local.php.dist config/autoload/development.local.php",
+    "migration": "phinx --ansi",
+    "development-disable": "rm config/autoload/development.local.php"
   }
 }
