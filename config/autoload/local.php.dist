@@ -1,0 +1,12 @@
+<?php
+
+return [
+    'debug' => true,
+
+    'auth' => [
+        'users' => [
+            'admin' => 'password',
+        ],
+    ],
+];
+© 2020 GitHub, Inc.

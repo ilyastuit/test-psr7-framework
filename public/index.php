@@ -1,10 +1,9 @@
 <?php
 
 use App\Http\ActionResolver;
-use App\Http\Controller\SiteController;
-use App\Http\Router\AuraRouterAdapter;
-use App\Http\Router\Exception\RequestNotMatchedException;
+use App\Http\Controller\HelloAction;
 use Aura\Router\RouterContainer;
+use Framework\Http\Application;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
@@ -12,26 +11,14 @@ use Zend\Diactoros\ServerRequestFactory;
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
-$aura = new RouterContainer();
-$routes = $aura->getMap();
+$container = require 'config/container.php';
+$app = $container->get(Application::class);
 
-$routes->get('action','/', [SiteController::class, 'index']);
-
-$router = new AuraRouterAdapter($aura);
-$resolver = new ActionResolver();
+require 'config/pipeline.php';
+require 'config/routes.php';
 
 $request = ServerRequestFactory::fromGlobals();
-
-try {
-    $result = $router->match($request);
-    foreach ($result->getAttributes() as $item => $value) {
-        $request = $request->withAttribute($item, $value);
-    }
-    $action = $resolver->resolve($result->getHandler());
-    $response = $action($request);
-} catch (RequestNotMatchedException $e) {
-    $response = new HtmlResponse('Not Found');
-}
+$response = $app->handle($request);
 
 $emitter = new SapiEmitter();
 $emitter->emit($response);
