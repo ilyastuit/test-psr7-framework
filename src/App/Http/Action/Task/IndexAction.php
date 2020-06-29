@@ -2,6 +2,7 @@
 
 namespace App\Http\Action\Task;
 
+use App\Model\Pagination;
 use App\Model\TaskReadRepository;
 use Framework\Template\TemplateRenderer;
 use Psr\Http\Message\ResponseInterface;
@@ -9,7 +10,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class TaskAction implements RequestHandlerInterface
+class IndexAction implements RequestHandlerInterface
 {
     private const PER_PAGE = 5;
 
