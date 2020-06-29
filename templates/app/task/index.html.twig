@@ -1,37 +1,37 @@
 {% extends 'layout/default.html.twig' %}
 
-{% block title %}Blog{% endblock %}
+{% block title %}task{% endblock %}
 
 {% block meta %}
-    <meta name="description" content="Blog Page description" />
+    <meta name="description" content="task Page description" />
 {% endblock %}
 
 {% block breadcrumbs %}
     <ul class="breadcrumb">
-        <li><a href="{{ path('home') }}">Home</a></li>
-        <li class="active">Blog</li>
+        <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+        <li class="breadcrumb-item active">task</li>
     </ul>
 {% endblock %}
 
 {% block content %}
-    <h1>Blog</h1>
+    <h1>task</h1>
 
-    {% for post in posts %}
+    {% for task in tasks %}
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <span class="pull-right">{{ post.date|date('Y-m-d') }}</span>
-                <a href="{{ path('blog_show', {'id': post.id}) }}">{{ post.title }}</a>
+        <div class="card mb-3">
+            <div class="card-header">
+                <span class="float-right">{{ task.date|date('Y-m-d') }}, {{ task.commentsCount }} comments</span>
+                <a href="{{ path('task_show', {'id': task.id}) }}">{{ task.title }}</a>
             </div>
-            <div class="panel-body">{{ post.content|nl2br }}</div>
+            <div class="card-body">{{ task.preview|nl2br }}</div>
         </div>
 
     {% endfor %}
 
     {% include 'share/pager.html.twig' with {
         'pager': pager,
-        'main_route': 'blog',
-        'route': 'blog_page',
+        'main_route': 'task',
+        'route': 'task_page',
     } %}
 
 {% endblock %}
