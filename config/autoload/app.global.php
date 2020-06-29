@@ -6,7 +6,10 @@ use Framework\Http\Application;
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
+use Framework\Template\TemplateRenderer;
+use Framework\Template\Twig\TwigRenderer;
 use Psr\Container\ContainerInterface;
+use Zend\Stratigility\Middleware\ErrorResponseGenerator;
 
 return [
     'dependencies' => [
@@ -29,7 +32,7 @@ return [
             },
             ErrorHandlerMiddleware::class => function (ContainerInterface $container) {
                     return new ErrorHandlerMiddleware(
-                    $container->get('config')['debug']
+                        $container->get(TemplateRenderer::class)
                 );
             },
         ],

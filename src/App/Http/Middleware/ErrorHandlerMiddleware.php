@@ -4,37 +4,26 @@
 namespace App\Http\Middleware;
 
 
+use Framework\Template\TemplateRenderer;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class ErrorHandlerMiddleware implements MiddlewareInterface
+class ErrorHandlerMiddleware implements RequestHandlerInterface
 {
-    private $debug;
+    private $template;
 
-    public function __construct(bool $debug)
+    public function __construct(TemplateRenderer $template)
     {
-        $this->debug = $debug;
+        $this->template = $template;
     }
 
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        try {
-            return $handler->handle($request);
-        } catch (\Throwable $e) {
-            $view = $this->debug ? 'error/error-debug' : 'error/error';
-            return new HtmlResponse('Error . ' . $e);
-        }
-    }
-
-    private static function getStatusCode(\Throwable $e) : int
-    {
-        $code = $e->getCode();
-        if ($code >= 400 && $code < 600) {
-            return $code;
-        }
-        return 500;
+        return new HtmlResponse($this->template->render('error/404', [
+            'request' => $request,
+        ]), 404);
     }
 }
