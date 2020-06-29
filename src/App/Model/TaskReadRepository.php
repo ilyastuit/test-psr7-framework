@@ -16,16 +16,17 @@ class TaskReadRepository
     /**
      * @return TaskView[]
      */
-    public function getAll(): array
+    public function getAll(int $offset, int $limit): array
     {
-        $stmt = $this->pdo->query('SELECT * FROM tasks ORDER BY id DESC');
+        $stmt = $this->pdo->prepare('SELECT * FROM posts ORDER BY id DESC LIMIT ? OFFSET ?');
+        $stmt->execute([$limit, $offset]);
 
         return array_map([$this, 'hydratePost'], $stmt->fetchAll());
     }
 
     public function find($id): ?TaskView
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM posts WHERE id = ?');
+        $stmt = $this->pdo->prepare('SELECT * FROM tasks WHERE id = ?');
         $stmt->execute([$id]);
 
         return ($row = $stmt->fetch()) ? $this->hydratePost($row) : null;
@@ -36,5 +37,11 @@ class TaskReadRepository
         $view = new TaskView();
 
         return $view;
+    }
+
+    public function countAll(): int
+    {
+        $stmt = $this->pdo->query('SELECT COUNT(id) FROM tasks');
+        return $stmt->fetchColumn();
     }
 }

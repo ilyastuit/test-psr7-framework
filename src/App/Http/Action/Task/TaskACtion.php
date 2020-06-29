@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Action;
+namespace App\Http\Action\Task;
 
 use App\Model\TaskReadRepository;
 use Framework\Template\TemplateRenderer;
@@ -11,6 +11,8 @@ use Zend\Diactoros\Response\HtmlResponse;
 
 class TaskAction implements RequestHandlerInterface
 {
+    private const PER_PAGE = 5;
+
     private $tasks;
     private $template;
 
@@ -22,10 +24,20 @@ class TaskAction implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $tasks = $this->tasks->getAll();
+        $pager = new Pagination(
+            $this->tasks->countAll(),
+            $request->getAttribute('page') ?: 1,
+            self::PER_PAGE
+        );
+
+        $tasks = $this->tasks->getAll(
+            $pager->getOffset(),
+            $pager->getLimit()
+        );
 
         return new HtmlResponse($this->template->render('app/task/index', [
             'tasks' => $tasks,
+            'pager' => $pager,
         ]));
     }
 }
