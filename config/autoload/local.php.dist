@@ -8,5 +8,10 @@ return [
             'admin' => 'password',
         ],
     ],
+
+  'pdo' => [
+        'dsn' => 'mysql:host=localhost;port=3306;dbname=app;charset=utf8mb4',
+        'username' => '',
+        'password' => '',
+    ],
 ];
-© 2020 GitHub, Inc.
