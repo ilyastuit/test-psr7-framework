@@ -18,8 +18,11 @@ class TaskReadRepository
      */
     public function getAll(int $offset, int $limit): array
     {
-        $stmt = $this->pdo->prepare('SELECT * FROM posts ORDER BY id DESC LIMIT ? OFFSET ?');
-        $stmt->execute([$limit, $offset]);
+        $stmt = $this->pdo->prepare('SELECT * FROM tasks ORDER BY id DESC LIMIT :limit OFFSET :offset');
+        $stmt->bindParam(':limit', $limit, \PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, \PDO::PARAM_INT);
+
+        $stmt->execute();
 
         return array_map([$this, 'hydratePost'], $stmt->fetchAll());
     }
@@ -35,6 +38,14 @@ class TaskReadRepository
     private function hydratePost(array $row): TaskView
     {
         $view = new TaskView();
+
+        $view->id = (int)$row['id'];
+        $view->updated_at = new \DateTimeImmutable($row['updated_at']);
+        $view->created_at = new \DateTimeImmutable($row['created_at']);
+        $view->username = $row['username'];
+        $view->email = $row['email'];
+        $view->checked = (boolean)$row['checked'];
+        $view->content = $row['content'];
 
         return $view;
     }
