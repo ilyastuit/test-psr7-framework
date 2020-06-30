@@ -23,6 +23,22 @@ class TaskReadRepository
         $stmt->execute();
     }
 
+    public function update($params): void
+    {
+        $params['checked'] = isset($params['checked']) ? true : false;
+        $task = $this->find($params['id']);
+        $params['if_edited'] = $task->content === $params['text'] ? false : true;
+        $sql = "UPDATE tasks SET username = :username, email = :email, content = :content, checked = :checked, if_edited = :edited WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':username', $params['username'], \PDO::PARAM_STR);
+        $stmt->bindParam(':email', $params['email'], \PDO::PARAM_STR);
+        $stmt->bindParam(':content', $params['text'], \PDO::PARAM_STR);
+        $stmt->bindParam(':checked', $params['checked'], \PDO::PARAM_BOOL);
+        $stmt->bindParam(':edited', $params['if_edited'], \PDO::PARAM_BOOL);
+        $stmt->bindParam(':id', $params['id'], \PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
     /**
      * @return TaskView[]
      */

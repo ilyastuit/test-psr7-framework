@@ -12,9 +12,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
-class EditAction implements RequestHandlerInterface
+class SaveACtion implements RequestHandlerInterface
 {
-
     private $tasks;
     private $template;
 
@@ -32,16 +31,17 @@ class EditAction implements RequestHandlerInterface
             header('Location: /login');exit;
         }
         $validator = new ValidationHelper();
+        if (isset($_SESSION['errors'])) {
+            unset($_SESSION['errors']);
+        }
+        unset($_SESSION['params']);
 
-        $task = $this->tasks->find($request->getAttribute('task'));
-        $_SESSION['params']['username'] = $task->username ?? null;
-        $_SESSION['params']['email'] = $task->email ?? null;
-        $_SESSION['params']['text'] = $task->content ?? null;
-        $_SESSION['params']['checked'] = $task->checked ?? null;
+        $params = $request->getParsedBody();
+        $params['id'] = $request->getAttribute('task');
+        if ($this->tasks->validate($params)) {
+            $this->tasks->update($params);
+        }
 
-        return new HtmlResponse($this->template->render('app/cabinet/edit', [
-            'task' => $task,
-            'validator' => $validator,
-        ]));
+        header('Location: /');exit;
     }
 }

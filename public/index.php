@@ -8,6 +8,7 @@ use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
+error_reporting(0);
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 

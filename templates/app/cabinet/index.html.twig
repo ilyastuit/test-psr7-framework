@@ -1,6 +1,6 @@
 {% extends 'layout/default.html.twig' %}
 
-{% block title %}task{% endblock %}
+{% block title %}Tasks{% endblock %}
 
 {% block meta %}
     <meta name="description" content="task Page description" />
@@ -50,6 +50,7 @@
                 </form>
             </div>
         </div>
+    <span class="float-right"><a href="{{ path('logout') }}" class="btn btn-warning">Logout</a></span>
 
     <h1>Tasks</h1>
 
@@ -66,7 +67,7 @@
                 {% if task.if_edited == true %}
                     Edited by Admin.
                 {% endif %}
-                {% if task.if_edited == true %}
+                {% if task.checked == true %}
                     <span class="float-right"><span class="btn btn-success">Checked</span></span>
                 {% endif %}
             </div>
@@ -76,8 +77,8 @@
 
     {% include 'share/pager.html.twig' with {
         'pager': pager,
-        'main_route': 'home',
-        'route': 'task_page',
+        'main_route': 'cabinet',
+        'route': 'cabinet_page',
     } %}
 
 

@@ -16,14 +16,14 @@ class IndexAction implements RequestHandlerInterface
 {
     private const PER_PAGE = 3;
 
-    private $tasks;
-    private $template;
+        private $tasks;
+        private $template;
 
-    public function __construct(TaskReadRepository $tasks, TemplateRenderer $template)
-    {
-        $this->tasks = $tasks;
-        $this->template = $template;
-    }
+        public function __construct(TaskReadRepository $tasks, TemplateRenderer $template)
+        {
+            $this->tasks = $tasks;
+            $this->template = $template;
+        }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
