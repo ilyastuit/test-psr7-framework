@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http;
+namespace App\Http;
 
 class ActionResolver
 {

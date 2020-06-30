@@ -1,22 +1,84 @@
-{% extends 'layout/columns.html.twig' %}
+{% extends 'layout/default.html.twig' %}
 
-{% block title %}Cabinet Page title{% endblock %}
+{% block title %}task{% endblock %}
+
+{% block meta %}
+    <meta name="description" content="task Page description" />
+{% endblock %}
 
 {% block breadcrumbs %}
     <ul class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ path('home') }}">Home</a></li>
+        <li class="breadcrumb-item active">task</li>
     </ul>
 {% endblock %}
 
-{% block main %}
-    <h1>Cabinet of {{ name }}</h1>
-{% endblock %}
+{% block content %}
 
-{% block sidebar %}
-    <div class="card mb-3">
-        <div class="card-header">Cabinet</div>
-        <div class="card-body">
-            Cabinet navigation
+        <div class="form-row">
+            <div class="col-1 mr-5">
+                <form action="" method="get">
+                    <input type="hidden" name="sort" value="{{ sortSwitcher.sortSwitcher(params.sort) }}" />
+                    <input type="hidden" name="field" value="username"/>
+                    <button class="btn">
+                        {% if params.field == 'username' %}
+                            {{ sortSwitcher.arrowSwitcher(params.sort)|raw }}
+                        {% endif %}
+                        Username</button>
+                </form>
+            </div>
+            <div class="col-1">
+                <form action="" method="get">
+                    <input type="hidden" name="sort" value="{{ sortSwitcher.sortSwitcher(params.sort) }}" />
+                    <input type="hidden" name="field" value="email"/>
+                    <button class="btn">
+                        {% if params.field == 'email' %}
+                            {{ sortSwitcher.arrowSwitcher(params.sort)|raw }}
+                        {% endif %}
+                        Email</button>
+                </form>
+            </div>
+            <div class="col-1">
+                <form action="" method="get">
+                    <input type="hidden" name="sort" value="{{ sortSwitcher.sortSwitcher(params.sort) }}" />
+                    <input type="hidden" name="field" value="checked"/>
+                    <button class="btn">
+                        {% if params.field == 'checked' %}
+                            {{ sortSwitcher.arrowSwitcher(params.sort)|raw }}
+                        {% endif %}
+                        Checked</button>
+                </form>
+            </div>
         </div>
-    </div>
+
+    <h1>Tasks</h1>
+
+    {% for task in tasks %}
+
+        <div class="card mb-3">
+            <div class="card-header ">
+                <span class="float-right">{{ task.created_at|date('Y-m-d') }}    <a href="{{ path('edit_task', {'task' : task.id}) }}" class="btn btn-success">Edit</a></span>
+                <b>Username: </b><a>{{ task.username }}</a>
+                <b>Email: </b><a>{{ task.email }}</a>
+            </div>
+            <div class="card-body">{{ task.content|nl2br }}</div>
+            <div class="card-footer">
+                {% if task.if_edited == true %}
+                    Edited by Admin.
+                {% endif %}
+                {% if task.if_edited == true %}
+                    <span class="float-right"><span class="btn btn-success">Checked</span></span>
+                {% endif %}
+            </div>
+        </div>
+
+    {% endfor %}
+
+    {% include 'share/pager.html.twig' with {
+        'pager': pager,
+        'main_route': 'home',
+        'route': 'task_page',
+    } %}
+
+
 {% endblock %}
