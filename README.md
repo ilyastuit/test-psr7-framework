@@ -1,7 +1,6 @@
 # Тестовое задание
 
 Тестовое задание на создание приложения на основе MVC.
-MVC делал исходя из уроков Дмитрия Елисеева https://elisdn.ru/blog/113/psr7-framework-http
 
 ### Использованные библиотеки
 * [Aura.Router](https://github.com/auraphp/Aura.Router)
